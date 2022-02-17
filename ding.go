@@ -49,8 +49,9 @@ func New(token string) *Robot {
 	}
 }
 
-func (r *Robot) SetKeyWord(key string){
+func (r *Robot) SetKeyWord(key string) *Robot {
       r.keyword = key
+      return r
 }
 
 func (r *Robot) AtAll(ok bool) *Robot {
