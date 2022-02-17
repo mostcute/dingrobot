@@ -12,6 +12,7 @@ const defaultAPI = "https://oapi.dingtalk.com/robot/send"
 type Robot struct {
 	token string
 	at    robotAt
+	keyword string
 }
 
 type robotAt struct {
@@ -46,6 +47,10 @@ func New(token string) *Robot {
 	return &Robot{
 		token: token,
 	}
+}
+
+func (r *Robot) SetKeyWord(key string){
+      r.keyword = key
 }
 
 func (r *Robot) AtAll(ok bool) *Robot {
@@ -86,13 +91,13 @@ func (r *Robot) Text(content string) error {
 	request := robotRequest{
 		Type: "text",
 	}
-	request.Text.Content = content
+	request.Text.Content = r.keyword+" "+content
 	return r.postData(request)
 }
 
 func (r *Robot) Markdown(title string, text string) error {
 	request := robotRequest{Type: "markdown"}
-	request.Markdown.Title = title
+	request.Markdown.Title = r.keyword + title
 	request.Markdown.Text = text
 	return r.postData(request)
 }
