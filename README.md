@@ -23,7 +23,7 @@ import "github.com/mostcute/dingrobot"
 
 func main(){
 //测试key word
-robot := dingrobot.New("token")
+robot := dingrobot.New("xxxxx-access_token-*****")
 robot.SetKeyWord("111")
 
 // send text message
@@ -42,7 +42,7 @@ robot.AtAll(true).Text("test keyword")
 
 
 //测试 Secret
-robotSecret := dingrobot.New("token")
+robotSecret := dingrobot.New("xxxxx-access_token-*****")
 robotSecret.SetSecret("获取到的secret")
 // send text message
 robotSecret.Text("robotSecret")
@@ -52,7 +52,7 @@ robotSecret.Markdown("makedown","**robotSecret**")
 robotSecret.Link("Google", "Google homepage", "https://www.google.com.hk","https://www.google.com.hk")
 
 // At someone
-robotSecret.At("18658148376").Text("robotSecret")
+robotSecret.At("186581****").Text("robotSecret")
 
 // At all
 robotSecret.AtAll(true).Text("robotSecret")
