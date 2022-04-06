@@ -1,4 +1,4 @@
-module dingrobot
+module github.com/mostcute/dingrobot
 
 go 1.17
 
