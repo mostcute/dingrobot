@@ -2,17 +2,23 @@ package dingrobot
 
 import (
 	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"time"
 )
 
 const defaultAPI = "https://oapi.dingtalk.com/robot/send"
 
 type Robot struct {
-	token string
-	at    robotAt
+	token   string
+	at      robotAt
 	keyword string
+	secret  string
 }
 
 type robotAt struct {
@@ -49,9 +55,20 @@ func New(token string) *Robot {
 	}
 }
 
+func (r *Robot) At(at string) *Robot {
+	r.at.AtMobiles = append(r.at.AtMobiles, at)
+	r.at.AtAll=false
+	return r
+}
+
 func (r *Robot) SetKeyWord(key string) *Robot {
-      r.keyword = key
-      return r
+	r.keyword = key
+	return r
+}
+
+func (r *Robot) SetSecret(secret string) *Robot {
+	r.secret = secret
+	return r
 }
 
 func (r *Robot) AtAll(ok bool) *Robot {
@@ -67,7 +84,23 @@ func (r *Robot) AtMobiles(tels ...string) *Robot {
 }
 
 func (r *Robot) sendUrl() string {
-	return defaultAPI + "?access_token=" + r.token
+	if r.keyword != "" {
+		return defaultAPI + "?access_token=" + r.token
+	} else if r.secret != "" {
+		timestamp := time.Now().UnixNano() / 1e6
+		stringToSign := fmt.Sprintf("%d\n%s", timestamp, r.secret)
+
+		sign := r.hmacSha256(stringToSign)
+		url := fmt.Sprintf("%s&timestamp=%d&sign=%s", defaultAPI+"?access_token="+r.token, timestamp, sign)
+		return url
+	}
+	return ""
+}
+
+func (r *Robot) hmacSha256(stringToSign string) string {
+	h := hmac.New(sha256.New, []byte(r.secret))
+	h.Write([]byte(stringToSign))
+	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
 func (r *Robot) postData(request robotRequest) error {
@@ -88,11 +121,12 @@ func (r *Robot) postData(request robotRequest) error {
 	return nil
 }
 
+//优先使用 keyword
 func (r *Robot) Text(content string) error {
 	request := robotRequest{
 		Type: "text",
 	}
-	request.Text.Content = r.keyword+" "+content
+	request.Text.Content = r.keyword + " " + content
 	return r.postData(request)
 }
 
@@ -106,7 +140,7 @@ func (r *Robot) Markdown(title string, text string) error {
 func (r *Robot) Link(title, text string, url string, picUrl string) error {
 	request := robotRequest{Type: "link"}
 	request.Link.Title = title
-	request.Link.Text = text
+	request.Link.Text = r.keyword + text
 	request.Link.PictureURL = picUrl
 	request.Link.MessageURL = url
 	return r.postData(request)
