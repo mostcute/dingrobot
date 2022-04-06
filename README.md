@@ -14,7 +14,7 @@ Prepare DingTalk robot access_token, See my article <https://testerhome.com/topi
 >robot.SetKeyWord("111")
 
 2. Secret
->robotSecret.SetSecret("SEC4dd5f7859340f03f9ce3db9affd27ac269b991f2a7b81b7cf341c4de6173024e")
+>robotSecret.SetSecret("获取到的secret")
 
 
 ## Usage
@@ -23,7 +23,7 @@ import "github.com/mostcute/dingrobot"
 
 func main(){
 //测试key word
-robot := dingrobot.New("fa1e90877ab61046ef95c357f3660faa80e1dbc4e50aa108c1da88539a544392")
+robot := dingrobot.New("token")
 robot.SetKeyWord("111")
 
 // send text message
@@ -34,7 +34,7 @@ robot.Markdown("makedown","**test keyword**")
 robot.Link("Google", "Google homepage", "https://www.google.com.hk","https://www.google.com.hk")
 
 // At someone
-robot.At("18658148376").Text("test keyword")
+robot.At("1865814****").Text("test keyword")
 
 // At all
 robot.AtAll(true).Text("test keyword")
@@ -42,8 +42,8 @@ robot.AtAll(true).Text("test keyword")
 
 
 //测试 Secret
-robotSecret := dingrobot.New("c1a81c5a7ff1411ef5f6c074cbc8d71c464bc4ccc7eb86bc25ba3596f7ec703b")
-robotSecret.SetSecret("SEC4dd5f7859340f03f9ce3db9affd27ac269b991f2a7b81b7cf341c4de6173024e")
+robotSecret := dingrobot.New("token")
+robotSecret.SetSecret("获取到的secret")
 // send text message
 robotSecret.Text("robotSecret")
 // send markdown message
